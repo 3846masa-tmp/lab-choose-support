@@ -1,0 +1,14 @@
+{
+  "manifest_version": 2,
+  "name": "研究室調査 拡張機能",
+  "version": "0.2015.4",
+
+  "description": "研究室調査2015のUIをまともにする拡張機能",
+
+  "content_scripts": [
+    {
+      "matches": ["https://oh-o2.meiji.ac.jp/portal/oh-o_meiji/classweb*"],
+      "js": ["jquery.min.js","normalUI.js"]
+    }
+  ]
+}
