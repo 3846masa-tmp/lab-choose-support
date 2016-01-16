@@ -1,6 +1,6 @@
 $(function(){
 var href = location.href;
-if (href.indexOf("questionnaire") < 0 && href.indexOf("questionAnswer") < 0) {
+if (href.indexOf("questionAnswer") < 0) {
   return;
 }
 
@@ -16,7 +16,14 @@ function initUI() {
 
   var table = $('.questionnaireDetail:has(table) table');
   $('tr.heading th', table).each(function(){$(this).text($(this).text().replace(/究室/,''));});
-  $('tr.heading .questionSub', table).css({'min-width': '40px'});
+  $('tr.heading .questionSub', table).css({ 'min-width': '40px' });
+
+  var randomButton = $("<button>").addClass("btn bSizeS fSizeSS");
+  randomButton.bind('click',randomSet).attr({type: 'button', id: 'randamize'});
+  randomButton.css({display: 'inline-block', margin: '0 10px'});
+  $("tr.heading th:eq(0)", table).append(
+    randomButton.append($('<span>').text("ランダム"))
+  );
 
   var labs = $.grep(
     $('tr.heading th', table).map(function(){return $(this).text().trim();}),
@@ -48,7 +55,7 @@ function initUI() {
   function initValue() {
     $('[id*="subQuestionDetails"]', table).each(function(){
       if (this.checked) {
-        var info = $(this).attr('id').match(/subQuestionDetails\[(\d+)\]\.answer(\d+)/);
+        var info = $(this).attr('id').match(/subQuestionDetails\[(\d+)\]\_answer(\d+)/);
         if (info.length === 3) {
           $('select[lab=' + info[2] + ']').val(info[1]);
         }
@@ -61,10 +68,20 @@ function initUI() {
     $('select', table).each(function(){
       var labNum = $(this).attr('lab');
       var rankNum = $(this).val();
-      var selectID = "subQuestionDetails[" + rankNum + "].answer" + labNum;
+      var selectID = "subQuestionDetails[" + rankNum + "]_answer" + labNum;
       $("[id$='" + selectID + "']")[0].checked = true;
     });
 
+    checkUnique();
+  }
+
+  function randomSet() {
+    var valuesList = [];
+    for (var n = 0; n < $('select', table).length; n++) valuesList.push(n);
+    valuesList.sort(function () { return (Math.random() < 0.5) ? -1 : 1; });
+    $('select', table).each(function () {
+      $(this).val(valuesList.shift());
+    });
     checkUnique();
   }
 
